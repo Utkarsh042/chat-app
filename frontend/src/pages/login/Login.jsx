@@ -1,13 +1,14 @@
-import React from "react";
+import { Link } from "react-router-dom"
+import { useState } from "react";
 import {
   Box,
   TextField,
   Button,
   Typography,
-  Link,
   ThemeProvider,
   createTheme,
 } from "@mui/material";
+import useLogin from "../../hooks/useLogin";
 
 const theme = createTheme({
   palette: {
@@ -16,6 +17,17 @@ const theme = createTheme({
 })
 
 const Login = () => {
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const {loading,login}= useLogin()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await login(username, password)
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
       <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20">
@@ -24,7 +36,7 @@ const Login = () => {
           <span className="text-blue-700"> Introverse</span>
         </h1>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <ThemeProvider
               theme={theme}
@@ -52,6 +64,8 @@ const Login = () => {
         InputProps={{ style: { backgroundColor: '#1e1e1e', color: 'white' } }}
         InputLabelProps={{ style: { color: '#aaa' } }}
         sx={{ mb: 2 }}
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
       />
 
       <TextField
@@ -62,12 +76,14 @@ const Login = () => {
         InputProps={{ style: { backgroundColor: '#1e1e1e', color: 'white' } }}
         InputLabelProps={{ style: { color: '#aaa' } }}
         sx={{ mb: 2 }}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
       
       <Typography
   variant="body2"
-  component="a"
-  href="#"
+  component={Link}
+  to = "/SignUp"
   sx={{
     display: 'inline-block',
     color: '#aaa',
@@ -84,11 +100,13 @@ const Login = () => {
 
 
       <Button
+      type="submit"
         fullWidth
         variant="contained"
         sx={{ backgroundColor: '#1e1e1e', '&:hover': { backgroundColor: '#333' } }}
+        disabled={loading}
       >
-        Login
+        {loading ? <span className='loading loading-spinner'></span> : "Login"}
       </Button>
 
               </Box>

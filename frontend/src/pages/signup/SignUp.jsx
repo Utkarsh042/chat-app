@@ -1,4 +1,5 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,7 +8,9 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import GenderCheckBox from "./GenderCheckBox";
+import GenderCheckBox from "./GenderCheckbox";
+import GenderCheckbox from "./GenderCheckbox";
+import useSignup from "../../hooks/useSignup";
 
 const theme = createTheme({
   palette: {
@@ -16,6 +19,25 @@ const theme = createTheme({
 });
 
 const SignUp = () => {
+  const [inputs, setInputs] = useState({
+    fullName: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+  });
+
+  const { loading, signup } = useSignup();
+
+  const handleCheckboxChange = (gender) => {
+    setInputs({ ...inputs, gender });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await signup(inputs);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
       <div className="w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20">
@@ -24,7 +46,7 @@ const SignUp = () => {
           <span className="text-blue-700"> Introverse</span>
         </h1>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <ThemeProvider theme={theme}>
               <Box
@@ -52,6 +74,10 @@ const SignUp = () => {
                   }}
                   InputLabelProps={{ style: { color: "#aaa" } }}
                   sx={{ mb: 2 }}
+                  value={inputs.fullName}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, fullName: e.target.value })
+                  }
                 />
 
                 <TextField
@@ -64,6 +90,10 @@ const SignUp = () => {
                   }}
                   InputLabelProps={{ style: { color: "#aaa" } }}
                   sx={{ mb: 2 }}
+                  value={inputs.username}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, username: e.target.value })
+                  }
                 />
 
                 <TextField
@@ -77,6 +107,10 @@ const SignUp = () => {
                   }}
                   InputLabelProps={{ style: { color: "#aaa" } }}
                   sx={{ mb: 2 }}
+                  value={inputs.password}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, password: e.target.value })
+                  }
                 />
 
                 <TextField
@@ -90,15 +124,22 @@ const SignUp = () => {
                   }}
                   InputLabelProps={{ style: { color: "#aaa" } }}
                   sx={{ mb: 2 }}
+                  value={inputs.confirmPassword}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, confirmPassword: e.target.value })
+                  }
                 />
 
                 {/* Gendeer checkbox goes here */}
-                <GenderCheckBox />
+                <GenderCheckbox
+                  onCheckboxChange={handleCheckboxChange}
+                  selectedGender={inputs.gender}
+                />
 
                 <Typography
                   variant="body2"
-                  component="a"
-                  href="#"
+                  component={Link}
+                  to={"/login"}
                   sx={{
                     display: "inline-block",
                     color: "#aaa",
@@ -115,14 +156,16 @@ const SignUp = () => {
 
                 <div>
                   <Button
+                    type="submit"
                     fullWidth
                     variant="contained"
                     sx={{
                       backgroundColor: "#1e1e1e",
                       "&:hover": { backgroundColor: "#333" },
                     }}
+                    disabled={loading}
                   >
-                    Sign Up
+                    {loading ? <span className="loading loading-spinner"></span> : "Sign Up"}
                   </Button>
                 </div>
               </Box>
@@ -135,7 +178,6 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
 
 // Started code for the signup component
 // import React from "react";
@@ -275,4 +317,3 @@ export default SignUp;
 // };
 
 // export default SignUp;
-
